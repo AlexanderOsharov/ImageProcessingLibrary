@@ -15,7 +15,8 @@ add_library(ImageProcessing STATIC
 target_include_directories(ImageProcessing PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/third_party>
+    $<INSTALL_INTERFACE:include/third_party>
 )
 
 # Установка библиотеки
@@ -29,6 +30,7 @@ install(TARGETS ImageProcessing
 
 # Установка заголовочных файлов
 install(DIRECTORY include/ DESTINATION include)
+install(DIRECTORY third_party/ DESTINATION include/third_party)
 
 # Экспорт целей
 install(EXPORT ImageProcessingTargets DESTINATION cmake)
