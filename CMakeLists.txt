@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 project(ImageProcessingLibrary LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -13,21 +13,22 @@ add_library(ImageProcessing STATIC
 
 # Подключение заголовочных файлов
 target_include_directories(ImageProcessing PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party
 )
 
 # Установка библиотеки
 install(TARGETS ImageProcessing
     EXPORT ImageProcessingTargets
-    RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
     ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include
 )
 
 # Установка заголовочных файлов
 install(DIRECTORY include/ DESTINATION include)
 
 # Экспорт целей
-export(EXPORT ImageProcessingTargets FILE ${CMAKE_CURRENT_BINARY_DIR}/ImageProcessingConfig.cmake)
 install(EXPORT ImageProcessingTargets DESTINATION cmake)
