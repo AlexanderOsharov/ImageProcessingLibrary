@@ -1,26 +1,40 @@
 #include <iostream>
 #include "Image.h"
-#include "GrayscaleProcessor.h"
-#include "ResizeProcessor.h"
+#include "ImageLoaderFactory.h"
 
 int main() {
-    Image image;
-    if (!image.load("input.jpg")) {
-        std::cerr << "Failed to load image" << std::endl;
+    std::string filename = "input.svg"; // Можно заменить на любой поддерживаемый формат
+    std::string outputFilename = "output.png";
+
+    // Определение формата по расширению
+    std::string extension = filename.substr(filename.find_last_of(".") + 1);
+
+    // Создание загрузчика
+    IImageLoader* loader = ImageLoaderFactory::createLoader(extension);
+    if (!loader) {
+        std::cerr << "Unsupported image format" << std::endl;
         return 1;
     }
 
-    GrayscaleProcessor grayscaleProcessor;
-    grayscaleProcessor.process(image);
+    Image image;
+    int width, height;
+    std::vector<std::vector<int>> pixels;
 
-    ResizeProcessor resizeProcessor(512, 512);
-    resizeProcessor.process(image);
+    if (!loader->load(filename, width, height, pixels)) {
+        std::cerr << "Failed to load image" << std::endl;
+        delete loader;
+        return 1;
+    }
 
-    if (!image.save("output.png")) {
+    image.setPixels(pixels);
+
+    if (!image.save(outputFilename)) {
         std::cerr << "Failed to save image" << std::endl;
+        delete loader;
         return 1;
     }
 
     std::cout << "Image processed successfully!" << std::endl;
+    delete loader;
     return 0;
 }
